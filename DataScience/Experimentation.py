@@ -128,7 +128,7 @@ def detect_namespaces(j_obj, ns_set, marginal_set):
         value = kv_entry[1]
 
         # Ignore entries whose key begins with an '_' except _text
-        if key and key[0] == '_' and key != '_text':
+        if key[0] == '_' and key != '_text':
             continue
 
         if type(value) is list:
@@ -255,7 +255,7 @@ def main(args):
         check_output(['vw','-h'], stderr=DEVNULL)
     except:
         print("Error: Vowpal Wabbit executable not found. Please install and add it to your path")
-        sys.exit()
+        sys.exit(1)
     print('File name: ' + args.file_path)
     print('File size: {:.3f} MB'.format(os.path.getsize(args.file_path)/(1024**2)))
     # Additional processing of inputs not covered by above
