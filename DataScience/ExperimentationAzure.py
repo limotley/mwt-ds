@@ -8,6 +8,8 @@ import dashboard_utils
 import LogDownloader
 import uuid
 from applicationinsights import TelemetryClient
+from fluent import sender
+from fluent import event
 
 def get_telemetry_client(appInsightsInstrumentationKey):
     print(appInsightsInstrumentationKey)
@@ -67,6 +69,9 @@ if __name__ == '__main__':
     task_dir = os.path.dirname(os.path.dirname(ld_args.log_dir))
 
     properties = {'app_id' : ld_args.app_id, 'evaluation_id' : main_args.evaluation_id }
+    logger = sender.FluentSender('microsoft.cloudai.personalization', host='localhost', port=24224)
+    if not logger.emit('tag', {'appId': 'userA', 'message': 'userB'}):
+        print(logger.last_error)
     telemetry_client != None and telemetry_client.track_event('ExperimentationAzure.StartEvaluation', properties)
 
      # Clean out logs directory
