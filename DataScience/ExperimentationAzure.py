@@ -70,8 +70,8 @@ if __name__ == '__main__':
 
     properties = {'app_id' : ld_args.app_id, 'evaluation_id' : main_args.evaluation_id }
     logger = sender.FluentSender('microsoft.cloudai.personalization', host='localhost', port=24224)
-    if not logger.emit('tag', {'appId': 'userA', 'message': 'userB'}):
-        print(logger.last_error)
+    if not logger.emit('log', {'level': 'INFO', 'message': 'genevatest'}):
+        print("failed to log", logger.last_error)
     telemetry_client != None and telemetry_client.track_event('ExperimentationAzure.StartEvaluation', properties)
 
      # Clean out logs directory
