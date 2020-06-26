@@ -72,7 +72,7 @@ if __name__ == '__main__':
     properties = {'app_id' : ld_args.app_id, 'evaluation_id' : main_args.evaluation_id }
 
     print("Entering logging")
-    logger = GenevaLogger(ld_args.app_id, ld_args.evaluation_id)
+    logger = GenevaLogger(ld_args.app_id, main_args.evaluation_id)
     #logger = sender.FluentSender('microsoft.cloudai.personalization', host='localhost', port=24224)
     logger.info('genevatest')
         #print("failed to log", logger.last_error)

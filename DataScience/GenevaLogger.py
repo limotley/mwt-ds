@@ -12,16 +12,19 @@ class GenevaLogger(object):
         self.job_id = job_id
 
     def info(self, msg, *args, **kwargs):
+        print(msg)
         base_log = {'level': 'INFO', 'message': msg, 'app_id': self.app_id, 'job_id': self.job_id}
         log_content = {**base_log, **kwargs}
         self.__logger.emit('log', log_content)
 
     def warning(self, msg, *args, **kwargs):
+        print(msg)
         base_log = {'level': 'WARNING', 'message': msg, 'app_id': self.app_id, 'job_id': self.job_id}
         log_content = {**base_log, **kwargs}
         self.__logger.emit('log', log_content)
 
     def error(self, msg, *args, **kwargs):
+        print(msg)
         base_log = {'level': 'ERROR', 'message': msg, 'app_id': self.app_id, 'job_id': self.job_id}
         log_content = {**base_log, **kwargs}
         self.__logger.emit('log', log_content)
