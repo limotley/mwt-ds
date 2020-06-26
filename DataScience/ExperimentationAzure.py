@@ -6,6 +6,7 @@ import Experimentation
 import FeatureImportance
 import dashboard_utils
 import LogDownloader
+from GenevaLogger import GenevaLogger
 import uuid
 from applicationinsights import TelemetryClient
 from fluent import sender
@@ -69,9 +70,13 @@ if __name__ == '__main__':
     task_dir = os.path.dirname(os.path.dirname(ld_args.log_dir))
 
     properties = {'app_id' : ld_args.app_id, 'evaluation_id' : main_args.evaluation_id }
-    logger = sender.FluentSender('microsoft.cloudai.personalization', host='localhost', port=24224)
-    if not logger.emit('log', {'level': 'INFO', 'message': 'genevatest'}):
-        print("failed to log", logger.last_error)
+
+    print("Entering logging")
+    logger = GenevaLogger(ld_args.app_id, ld_args.evaluation_id)
+    #logger = sender.FluentSender('microsoft.cloudai.personalization', host='localhost', port=24224)
+    logger.info('genevatest')
+        #print("failed to log", logger.last_error)
+
     telemetry_client != None and telemetry_client.track_event('ExperimentationAzure.StartEvaluation', properties)
 
      # Clean out logs directory
