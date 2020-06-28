@@ -30,7 +30,7 @@ class Logger:
 
     @staticmethod
     def error(msg, *args, **kwargs):
-        Logger.__log('ERROR', str(msg), sys.stderr)
+        Logger.__log('ERROR', msg, sys.stderr)
 
     @staticmethod
     def close():
