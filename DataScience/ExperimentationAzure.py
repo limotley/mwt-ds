@@ -70,7 +70,6 @@ if __name__ == '__main__':
     properties = {'app_id' : ld_args.app_id, 'evaluation_id' : main_args.evaluation_id }
 
     Logger.create_logger(ld_args.app_id, main_args.evaluation_id)
-
     telemetry_client != None and telemetry_client.track_event('ExperimentationAzure.StartEvaluation', properties)
 
      # Clean out logs directory
