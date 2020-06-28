@@ -70,7 +70,7 @@ if __name__ == '__main__':
     properties = {'app_id' : ld_args.app_id, 'evaluation_id' : main_args.evaluation_id }
 
     Logger.create_logger(ld_args.app_id, main_args.evaluation_id)
-    
+
     telemetry_client != None and telemetry_client.track_event('ExperimentationAzure.StartEvaluation', properties)
 
      # Clean out logs directory
@@ -221,7 +221,7 @@ if __name__ == '__main__':
             shutil.rmtree(ld_args.log_dir, ignore_errors=True)
 
         end_time = datetime.now()
-        Logger.info('Total Job time in seconds:', (end_time - start_time).seconds, flush=True)
+        Logger.info('Total Job time in seconds:' + (end_time - start_time).seconds)
         azure_util.upload_to_blob(ld_args.app_id, os.path.join(main_args.output_folder, 'stdout.txt'), os.path.join(task_dir, 'stdout.txt'))
         azure_util.upload_to_blob(ld_args.app_id, os.path.join(main_args.output_folder, 'stderr.txt'), os.path.join(task_dir, 'stderr.txt'))
         telemetry_client != None and telemetry_client.track_event('ExperimentationAzure.CompleteEvaluation', properties, { 'TimeTaken' : (end_time - start_time).seconds })

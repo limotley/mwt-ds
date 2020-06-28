@@ -14,7 +14,8 @@ class Logger:
 
     @staticmethod
     def __log(level, msg, output=sys.stdout, tag='log'):
-        print(msg, file=output, flush=True)
+        print(msg, file=output)
+        output.flush()
         base_log = {'level': level, 'message': msg, 'appId': Logger.app_id, 'jobId': Logger.job_id}
         logger = sender.get_global_sender()
         logger.emit(tag, base_log)
