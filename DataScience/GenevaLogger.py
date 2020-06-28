@@ -17,8 +17,9 @@ class Logger:
         print(msg, file=output)
         output.flush()
         base_log = {'level': level, 'message': msg, 'appId': Logger.app_id, 'jobId': Logger.job_id}
+        log_content = {**base_log, **kwargs}
         logger = sender.get_global_sender()
-        logger.emit('log', base_log)
+        logger.emit('log', log_content)
 
     @staticmethod
     def info(msg, *args, **kwargs):
