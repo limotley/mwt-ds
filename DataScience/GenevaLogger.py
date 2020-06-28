@@ -13,7 +13,7 @@ class Logger:
         Logger.job_id = job_id
 
     @staticmethod
-    def __log(level, msg, output=sys.stdout):
+    def __log(level, msg, output=sys.stdout, *args, **kwargs):
         print(msg, file=output)
         output.flush()
         base_log = {'level': level, 'message': msg, 'appId': Logger.app_id, 'jobId': Logger.job_id}
