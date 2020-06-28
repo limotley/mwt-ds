@@ -6,14 +6,12 @@ import Experimentation
 import FeatureImportance
 import dashboard_utils
 import LogDownloader
-from GenevaLogger import GenevaLogger
+from GenevaLogger import Logger
 import uuid
 from applicationinsights import TelemetryClient
-from fluent import sender
-from fluent import event
 
 def get_telemetry_client(appInsightsInstrumentationKey):
-    print(appInsightsInstrumentationKey)
+    Logger.info(appInsightsInstrumentationKey)
     if appInsightsInstrumentationKey:
         client = TelemetryClient(appInsightsInstrumentationKey)
         client.context.operation.id = str(uuid.uuid4())
@@ -24,13 +22,13 @@ def get_telemetry_client(appInsightsInstrumentationKey):
 def check_system():
     try:
         bytes_in_gb = 1024**3
-        print('Cpu count : {}'.format(psutil.cpu_count()))
-        print('Cpu count : {}'.format(psutil.cpu_count(logical=False)))
-        print('/mnt Total size: {:.3f} GB'.format(shutil.disk_usage('/mnt').total / bytes_in_gb))
-        print('/mnt Used size:  {:.3f} GB'.format(shutil.disk_usage('/mnt').used  / bytes_in_gb))
-        print('/mnt Free size:  {:.3f} GB'.format(shutil.disk_usage('/mnt').free  / bytes_in_gb))
+        #Logger.info('Cpu count : {}'.format(psutil.cpu_count()))
+        #Logger.info('Cpu count : {}'.format(psutil.cpu_count(logical=False)))
+        #Logger.info('/mnt Total size: {:.3f} GB'.format(shutil.disk_usage('/mnt').total / bytes_in_gb))
+        #Logger.info('/mnt Used size:  {:.3f} GB'.format(shutil.disk_usage('/mnt').used  / bytes_in_gb))
+        #Logger.info('/mnt Free size:  {:.3f} GB'.format(shutil.disk_usage('/mnt').free  / bytes_in_gb))
     except Exception as e:
-        print(e)
+        Logger.error(e)
 
 if __name__ == '__main__':
     check_system()
@@ -55,7 +53,7 @@ if __name__ == '__main__':
     main_parser.add_argument('--appInsightsInstrumentationKey', help="App Insights key for logging metrics")
     main_args, other_args = main_parser.parse_known_args(sys.argv[1:])
 
-    telemetry_client = get_telemetry_client(main_args.appInsightsInstrumentationKey)
+    telemetry_client = None#get_telemetry_client(main_args.appInsightsInstrumentationKey)
 
     # Parse LogDownloader args
     log_download_start_time = datetime.now()
@@ -71,17 +69,13 @@ if __name__ == '__main__':
 
     properties = {'app_id' : ld_args.app_id, 'evaluation_id' : main_args.evaluation_id }
 
-    print("Entering logging")
-    logger = GenevaLogger(ld_args.app_id, main_args.evaluation_id)
-    #logger = sender.FluentSender('microsoft.cloudai.personalization', host='localhost', port=24224)
-    logger.info('genevatest')
-        #print("failed to log", logger.last_error)
+    Logger.create_logger(ld_args.app_id, main_args.evaluation_id)
 
     telemetry_client != None and telemetry_client.track_event('ExperimentationAzure.StartEvaluation', properties)
 
      # Clean out logs directory
     if main_args.delete_logs_dir and os.path.isdir(ld_args.log_dir):
-        print('Deleting ' + ld_args.log_dir)
+        Logger.info('Deleting ' + ld_args.log_dir)
         shutil.rmtree(ld_args.log_dir, ignore_errors=True)
 
     try:
@@ -90,11 +84,8 @@ if __name__ == '__main__':
         telemetry_client != None and telemetry_client.track_event('ExperimentationAzure.LogDownload', properties, { 'TimeTaken' : (datetime.now() - log_download_start_time).seconds , 'Total_Size': total_download_size})
 
         if output_gz_fp == None:
-            message = 'No logs found between start date: {0} and end date:{1}. Exiting ... '.format(ld_args.start_date, ld_args.end_date)
-            telemetry_client != None and telemetry_client.track_trace(message)
-            telemetry_client != None and telemetry_client.track_event('ExperimentationAzure.CompleteEvaluation', properties)
-            telemetry_client != None and telemetry_client.flush()
-            sys.exit(message)
+            Logger.error('No logs found between start date: {0} and end date:{1}. Exiting ... '.format(ld_args.start_date, ld_args.end_date))
+            sys.exit(1)
 
         #Init Azure Util
         azure_util = AzureUtil(ld_args.conn_string, ld_args.account_name, ld_args.sas_token)
@@ -103,12 +94,12 @@ if __name__ == '__main__':
         if main_args.cleanup:
             for f in os.listdir(output_dir):
                 if f.endswith('json'):
-                    print('Deleting ' + f)
+                    Logger.info('Deleting ' + f)
                     os.remove(os.path.join(output_dir, f))
 
         # Evaluate custom policies
         if main_args.summary_json:
-            print('Evaluating custom policies')
+            Logger.info('Evaluating custom policies')
             summary_file_path = os.path.join(output_dir, main_args.summary_json)
             azure_util.download_from_blob(ld_args.app_id, os.path.join(main_args.output_folder, main_args.summary_json), summary_file_path)
             try:
@@ -117,21 +108,21 @@ if __name__ == '__main__':
                     for p in data['policyResults']:
                         policyName = p['name']
                         policyArgs = p['arguments']
-                        print('Name: ' + policyName)
-                        print('Command: ' + policyArgs)
+                        Logger.info('Name: ' + policyName)
+                        Logger.info('Command: ' + policyArgs)
                         custom_command = "vw " + policyArgs + " -d " + output_gz_fp + " -p " + output_gz_fp + "." + policyName + ".pred"
                         try:
                             check_output(custom_command.split(' '), stderr=STDOUT)
                         except Exception as e:
-                            print("Custom policy run failed")
-                            print(e)
+                            Logger.error("Custom policy run failed")
+                            Logger.error(e)
                             telemetry_client != None and telemetry_client.track_exception(e, { 'PolicyName': p['name'], 'PolicyArguments' : p['arguments']}.update(properties))
             except Exception as e:
-                print(e)
+                Logger.error(e)
 
         if main_args.run_experimentation:
             experimentation_start_time = datetime.now()
-            print('Running Experimentation')
+            Logger.info('Running Experimentation')
             # Parse Experimentation args
             experimentation_parser = argparse.ArgumentParser(formatter_class=argparse.RawTextHelpFormatter)
             Experimentation.add_parser_args(experimentation_parser)
@@ -154,7 +145,7 @@ if __name__ == '__main__':
 
         if main_args.get_feature_importance:
             feature_importance_start_time = datetime.now()
-            print('Download model file')
+            Logger.info('Download model file')
             model_fp = None
             blobs = azure_util.list_blobs(ld_args.app_id)
             for blob in blobs:
@@ -166,7 +157,7 @@ if __name__ == '__main__':
                     model_fp = os.path.join(output_dir, 'model.vw')
                     azure_util.download_from_blob(ld_args.app_id, blob.name, model_fp)
 
-            print('Generate Feature Importance')
+            Logger.info('Generate Feature Importance')
             feature_importance_parser = argparse.ArgumentParser(formatter_class=argparse.RawTextHelpFormatter)
             FeatureImportance.add_parser_args(feature_importance_parser)
             other_args.append('--data')
@@ -214,23 +205,25 @@ if __name__ == '__main__':
                                         'arguments' :p['arguments']
                                     })
                     except Exception as e:
-                        print(e)
+                        Logger.error(e)
                 with open(summary_file_path, 'w') as outfile:
                     json.dump(summary_data, outfile)
                 azure_util.upload_to_blob(ld_args.app_id, os.path.join(main_args.output_folder, main_args.summary_json), summary_file_path)
-        print("Done executing job")
+        Logger.info("Done executing job")
+        raise NameError("Testexcept")
     except Exception as e:
-        print(e, file=sys.stderr, flush=True)
-        print('Job failed. Please check stderr')
+        Logger.error('Job failed.')
+        Logger.error(e)
         sys.exit(1)
     finally:
         if main_args.cleanup:
-            print('Deleting folder as part of cleanup: ' + ld_args.log_dir)
+            Logger.info('Deleting folder as part of cleanup: ' + ld_args.log_dir)
             shutil.rmtree(ld_args.log_dir, ignore_errors=True)
 
         end_time = datetime.now()
-        print('Total Job time in seconds:', (end_time - start_time).seconds, flush=True)
+        Logger.info('Total Job time in seconds:', (end_time - start_time).seconds, flush=True)
         azure_util.upload_to_blob(ld_args.app_id, os.path.join(main_args.output_folder, 'stdout.txt'), os.path.join(task_dir, 'stdout.txt'))
         azure_util.upload_to_blob(ld_args.app_id, os.path.join(main_args.output_folder, 'stderr.txt'), os.path.join(task_dir, 'stderr.txt'))
         telemetry_client != None and telemetry_client.track_event('ExperimentationAzure.CompleteEvaluation', properties, { 'TimeTaken' : (end_time - start_time).seconds })
         telemetry_client != None and telemetry_client.flush()
+        Logger.close()
