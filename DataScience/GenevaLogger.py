@@ -21,15 +21,15 @@ class Logger:
         logger.emit('log', base_log)
 
     @staticmethod
-    def info(msg):
+    def info(msg, *args, **kwargs):
         Logger.__log('INFO', msg)
 
     @staticmethod
-    def warning(msg):
+    def warning(msg, *args, **kwargs):
         Logger.__log('WARNING', msg)
 
     @staticmethod
-    def error(msg):
+    def error(msg, *args, **kwargs):
         Logger.__log('ERROR', str(msg), sys.stderr)
 
     @staticmethod
