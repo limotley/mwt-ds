@@ -13,12 +13,12 @@ class Logger:
         Logger.job_id = job_id
 
     @staticmethod
-    def __log(level, msg, output=sys.stdout, tag='log'):
+    def __log(level, msg, output=sys.stdout):
         print(msg, file=output)
         output.flush()
         base_log = {'level': level, 'message': msg, 'appId': Logger.app_id, 'jobId': Logger.job_id}
         logger = sender.get_global_sender()
-        logger.emit(tag, base_log)
+        logger.emit('log', base_log)
 
     @staticmethod
     def info(msg):
@@ -30,7 +30,7 @@ class Logger:
 
     @staticmethod
     def error(msg):
-        Logger.__log('ERROR', str(msg), sys.stderr, 'exception')
+        Logger.__log('ERROR', str(msg), sys.stderr)
 
     @staticmethod
     def close():
