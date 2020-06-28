@@ -13,25 +13,23 @@ class Logger:
         Logger.job_id = job_id
 
     @staticmethod
-    def __log(level, msg, output=sys.stdout, *args, **kwargs):
-        print(msg, file=output)
-        output.flush()
+    def __log(level, msg, output=sys.stdout, tag='log'):
+        print(msg, file=output, flush=True)
         base_log = {'level': level, 'message': msg, 'appId': Logger.app_id, 'jobId': Logger.job_id}
-        log_content = {**base_log, **kwargs}
         logger = sender.get_global_sender()
-        logger.emit('log', log_content)
+        logger.emit(tag, base_log)
 
     @staticmethod
-    def info(msg, *args, **kwargs):
+    def info(msg):
         Logger.__log('INFO', msg)
 
     @staticmethod
-    def warning(msg, *args, **kwargs):
+    def warning(msg):
         Logger.__log('WARNING', msg)
 
     @staticmethod
-    def error(msg, *args, **kwargs):
-        Logger.__log('ERROR', msg, sys.stderr)
+    def error(msg):
+        Logger.__log('ERROR', str(msg), sys.stderr, 'exception')
 
     @staticmethod
     def close():
