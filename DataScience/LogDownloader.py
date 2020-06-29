@@ -84,16 +84,16 @@ def download_container(app_id, log_dir, container=None, conn_string=None, accoun
         container=app_id
 
     print('------'*10)
-    Logger.info('Current UTC time: {}'.format(datetime.datetime.now(datetime.timezone.utc)) + 
-                'app_id: {}'.format(app_id) +
-                'container: {}'.format(container) +
-                'log_dir: {}'.format(log_dir) +
-                'Start Date: {}'.format(start_date) +
-                'End Date: {}'.format(end_date) +
-                'Overwrite mode: {}'.format(overwrite_mode) +
-                'dry_run: {}'.format(dry_run) +
-                'version: {}'.format(version) +
-                'create_gzip_mode: {}'.format(create_gzip_mode) +
+    Logger.info('Current UTC time: {}\n'.format(datetime.datetime.now(datetime.timezone.utc)) + 
+                'app_id: {}\n'.format(app_id) +
+                'container: {}\n'.format(container) +
+                'log_dir: {}\n'.format(log_dir) +
+                'Start Date: {}\n'.format(start_date) +
+                'End Date: {}\n'.format(end_date) +
+                'Overwrite mode: {}\n'.format(overwrite_mode) +
+                'dry_run: {}\n'.format(dry_run) +
+                'version: {}\n'.format(version) +
+                'create_gzip_mode: {}\n'.format(create_gzip_mode))
     print('------'*10)
 
     if not dry_run:
@@ -116,7 +116,7 @@ def download_container(app_id, log_dir, container=None, conn_string=None, accoun
             if dry_run:
                 Logger.info('--dry_run - Not downloading!')
             else:
-                Logger.info('Downloading cooked logs')
+                Logger.info('Downloading output file')
                 try:
                     import requests
                     LogDownloaderURL = "https://cps-staging-exp-experimentation.azurewebsites.net/api/Log?account={ACCOUNT_NAME}&key={ACCOUNT_KEY}&start={START_DATE}&end={END_DATE}&container={CONTAINER}"
@@ -127,10 +127,10 @@ def download_container(app_id, log_dir, container=None, conn_string=None, accoun
                     url = LogDownloaderURL.format(ACCOUNT_NAME=conn_string_dict['AccountName'], ACCOUNT_KEY=conn_string_dict['AccountKey'].replace('+','%2b'), CONTAINER=container, START_DATE=start_date.strftime("%Y-%m-%d"), END_DATE=(end_date+datetime.timedelta(days=1)).strftime("%Y-%m-%d"))
                     r = requests.post(url)
                     open(output_fp, 'wb').write(r.content)
-                    Logger.info('Finished downloading cooked logs')
+                    Logger.info('Finished downloading output file')
                 except Exception as e:
                     Logger.error(e)
-                    sys.exit(1))
+                    sys.exit(1)
         
     else: # using BlockBlobService python api for cooked logs
         try:
@@ -251,7 +251,7 @@ def download_container(app_id, log_dir, container=None, conn_string=None, accoun
                         total_download_size_MB+=download_size_MB
                         Logger.info('\nDownloaded {:.3f} MB in {:.1f} sec. ({:.3f} MB/sec)\n'.format(download_size_MB, download_time, download_size_MB/download_time))
             except Exception as e:
-                Logger.info(e))
+                Logger.error(e)
 
         if create_gzip_mode > -1:
             if selected_fps:
@@ -310,7 +310,7 @@ def download_container(app_id, log_dir, container=None, conn_string=None, accoun
                     if not os.path.isfile(output_fp) or __name__ == '__main__' and input('Output file already exits. Do you want to overwrite [Y/n]? '.format(output_fp)) in {'Y', 'y'}:
                         d = {}
                         for fn in selected_fps:
-                            Logger.info('Parsing: {}'.format(fn), end='', )
+                            Logger.info('Parsing: {}'.format(fn))
                             if not dry_run:
                                 for x in open(fn, 'rb'):
                                     if x.startswith(b'{"_label_cost') and x.strip().endswith(b'}'):     # reading only cooked lined
