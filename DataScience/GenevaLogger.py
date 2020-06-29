@@ -14,10 +14,13 @@ class Logger:
 
     @staticmethod
     def __log(level, msg, output=sys.stdout, tag='log'):
-        print(msg, file=output, flush=True)
-        base_log = {'level': level, 'message': msg, 'appId': Logger.app_id, 'jobId': Logger.job_id}
-        logger = sender.get_global_sender()
-        logger.emit(tag, base_log)
+        try:
+            print(msg, file=output, flush=True)
+            base_log = {'level': level, 'message': str(msg), 'appId': Logger.app_id, 'jobId': Logger.job_id}
+            logger = sender.get_global_sender()
+            logger.emit(tag, base_log)
+        except Exception as e:
+            print("Error while logging: {}".format(e))
 
     @staticmethod
     def info(msg):
@@ -29,7 +32,7 @@ class Logger:
 
     @staticmethod
     def error(msg):
-        Logger.__log('ERROR', str(msg), sys.stderr, 'exception')
+        Logger.__log('ERROR', msg, sys.stderr, 'exception')
 
     @staticmethod
     def close():
