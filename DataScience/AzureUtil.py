@@ -24,7 +24,7 @@ class AzureUtil:
             print("now", flush=True)
             Logger.info(storage_file_name)
             Logger.info("Done uploading blob")
-            Logger.info('Upload Time:' + (t2-t1)-timedelta(microseconds=(t2-t1).microseconds))
+            Logger.info('Upload Time: {}'.format((t2-t1)-timedelta(microseconds=(t2-t1).microseconds)))
         except Exception as e:
             Logger.error(e)
             if self.throw_ex: raise(e)
