@@ -217,11 +217,11 @@ if __name__ == '__main__':
         sys.exit(1)
     finally:
         if main_args.cleanup:
-            Logger.info('Deleting folder as part of cleanup: ' + ld_args.log_dir)
+            #Logger.info('Deleting folder as part of cleanup: ' + ld_args.log_dir)
             shutil.rmtree(ld_args.log_dir, ignore_errors=True)
 
         end_time = datetime.now()
-        Logger.info('Total Job time in seconds:', (end_time - start_time).seconds, flush=True)
+        #Logger.info('Total Job time in seconds:', (end_time - start_time).seconds, flush=True)
         azure_util.upload_to_blob(ld_args.app_id, os.path.join(main_args.output_folder, 'stdout.txt'), os.path.join(task_dir, 'stdout.txt'))
         azure_util.upload_to_blob(ld_args.app_id, os.path.join(main_args.output_folder, 'stderr.txt'), os.path.join(task_dir, 'stderr.txt'))
         telemetry_client != None and telemetry_client.track_event('ExperimentationAzure.CompleteEvaluation', properties, { 'TimeTaken' : (end_time - start_time).seconds })
