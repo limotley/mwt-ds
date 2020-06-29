@@ -36,7 +36,7 @@ class AzureUtil:
             self.block_blob_service.get_blob_to_path(storage_container_name, storage_file_name, local_file_path)
             t2 = datetime.now()
             Logger.info("Done downloading blob")
-            Logger.info('Download Time:' + (t2-t1)-timedelta(microseconds=(t2-t1).microseconds))
+            Logger.info('Download Time: {}'.format((t2-t1)-timedelta(microseconds=(t2-t1).microseconds)))
         except Exception as e:
             Logger.error(e)
             if self.throw_ex: raise(e)
