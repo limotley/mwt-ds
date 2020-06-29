@@ -22,16 +22,15 @@ def get_telemetry_client(appInsightsInstrumentationKey):
 def check_system():
     try:
         bytes_in_gb = 1024**3
-        #Logger.info('Cpu count : {}'.format(psutil.cpu_count()))
-        #Logger.info('Cpu count : {}'.format(psutil.cpu_count(logical=False)))
-        #Logger.info('/mnt Total size: {:.3f} GB'.format(shutil.disk_usage('/mnt').total / bytes_in_gb))
-        #Logger.info('/mnt Used size:  {:.3f} GB'.format(shutil.disk_usage('/mnt').used  / bytes_in_gb))
-        #Logger.info('/mnt Free size:  {:.3f} GB'.format(shutil.disk_usage('/mnt').free  / bytes_in_gb))
-    except Exception as e:
-        Logger.error(e)
+        Logger.info('Cpu count : {}\n'.format(psutil.cpu_count()) +
+                    'Cpu count : {}\n'.format(psutil.cpu_count(logical=False)) +
+                    '/mnt Total size: {:.3f} GB\n'.format(shutil.disk_usage('/mnt').total / bytes_in_gb) +
+                    '/mnt Used size:  {:.3f} GB\n'.format(shutil.disk_usage('/mnt').used  / bytes_in_gb) +
+                    '/mnt Free size:  {:.3f} GB\n'.format(shutil.disk_usage('/mnt').free  / bytes_in_gb))
+    except:
+        Logger.exception(*sys.exc_info())
 
 if __name__ == '__main__':
-    check_system()
     # Change directory to working directory to have vw.exe in path
     os.chdir(os.path.dirname(os.path.realpath(__file__)))
     start_time = datetime.now()
@@ -70,6 +69,8 @@ if __name__ == '__main__':
     properties = {'app_id' : ld_args.app_id, 'evaluation_id' : main_args.evaluation_id }
 
     Logger.create_logger(ld_args.app_id, main_args.evaluation_id)
+
+    check_system()
 
     telemetry_client != None and telemetry_client.track_event('ExperimentationAzure.StartEvaluation', properties)
 
@@ -113,12 +114,10 @@ if __name__ == '__main__':
                         custom_command = "vw " + policyArgs + " -d " + output_gz_fp + " -p " + output_gz_fp + "." + policyName + ".pred"
                         try:
                             check_output(custom_command.split(' '), stderr=STDOUT)
-                        except Exception as e:
-                            Logger.error("Custom policy run failed")
-                            Logger.error(e)
-                            telemetry_client != None and telemetry_client.track_exception(e, { 'PolicyName': p['name'], 'PolicyArguments' : p['arguments']}.update(properties))
-            except Exception as e:
-                Logger.error(e)
+                        except:
+                            Logger.exception(*sys.exc_info(), "Custom policy run failed")
+            except:
+                Logger.exception(*sys.exc_info())
 
         if main_args.run_experimentation:
             experimentation_start_time = datetime.now()
@@ -204,16 +203,15 @@ if __name__ == '__main__':
                                         'name': p['name'],
                                         'arguments' :p['arguments']
                                     })
-                    except Exception as e:
-                        Logger.error(e)
+                    except:
+                        Logger.exception(*sys.exc_info())
                 with open(summary_file_path, 'w') as outfile:
                     json.dump(summary_data, outfile)
                 azure_util.upload_to_blob(ld_args.app_id, os.path.join(main_args.output_folder, main_args.summary_json), summary_file_path)
         Logger.info("Done executing job")
         raise NameError("Testexcept")
-    except Exception as e:
-        Logger.error('Job failed.')
-        Logger.error(e)
+    except:
+        Logger.exception(*sys.exc_info(), 'Job failed.')
         sys.exit(1)
     finally:
         if main_args.cleanup:
