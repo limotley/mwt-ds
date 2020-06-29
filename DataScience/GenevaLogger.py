@@ -15,12 +15,16 @@ class Logger:
     @staticmethod
     def __log(level, msg, output=sys.stdout, tag='log'):
         try:
+            print("printing", flush=True)
             print(msg, file=output, flush=True)
+            print("done printing", flush=True)
             base_log = {'level': level, 'message': str(msg), 'appId': Logger.app_id, 'jobId': Logger.job_id}
+            print("logging", flush=True)
             logger = sender.get_global_sender()
             logger.emit(tag, base_log)
+            print("logging done", flush=True)
         except Exception as e:
-            print("Logging error")
+            print("Logging error", flush=True)
             print("Error while logging: {}".format(e), flush=True)
 
     @staticmethod
