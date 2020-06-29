@@ -1,7 +1,6 @@
 from fluent import asyncsender as sender
 import json
 import sys
-import traceback
 
 class Logger:
     app_id = ""
@@ -42,7 +41,7 @@ class Logger:
 
     @staticmethod
     def exception(e_type, e_value, e_traceback, msg: str=None):
-        Logger.__log('ERROR', msg, exceptionType=e_type, exceptionValue=e_value, exceptionTraceback=e_traceback)
+        Logger.__log('ERROR', msg, sys.stderr, 'exception', exceptionType=e_type, exceptionValue=e_value, exceptionTraceback=e_traceback)
 
     @staticmethod
     def close():
