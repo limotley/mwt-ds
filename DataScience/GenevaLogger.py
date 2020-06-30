@@ -21,9 +21,13 @@ class Logger:
             base_log = {'level': level, 'message': msg, 'appId': Logger.app_id, 'jobId': Logger.job_id}
             log_content = {**base_log, **kwargs}
             print("logging", flush=True)
+            print(log_content)
             logger = sender.get_global_sender()
-            logger.emit(tag, log_content)
-            print("logging done", flush=True)
+            if not logger.emit(tag, log_content):
+                print(logger.last_error)
+                logger.clear_last_error()
+            else:
+                print("logging done", flush=True)
         except Exception as e:
             print("Error while logging: {}".format(e), flush=True)
 

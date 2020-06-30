@@ -8,6 +8,7 @@ import dashboard_utils
 import LogDownloader
 from GenevaLogger import Logger
 import uuid
+import traceback
 from applicationinsights import TelemetryClient
 
 def get_telemetry_client(appInsightsInstrumentationKey):
@@ -212,6 +213,7 @@ if __name__ == '__main__':
         raise NameError("Testexcept")
     except:
         Logger.exception(*sys.exc_info(), 'Job failed.')
+        Logger.error(traceback.format_exc())
         sys.exit(1)
     finally:
         if main_args.cleanup:
