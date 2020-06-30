@@ -210,11 +210,8 @@ if __name__ == '__main__':
                     json.dump(summary_data, outfile)
                 azure_util.upload_to_blob(ld_args.app_id, os.path.join(main_args.output_folder, main_args.summary_json), summary_file_path)
         Logger.info("Done executing job")
-        raise NameError("Testexcept")
     except Exception as e:
-        Logger.error(e)
         Logger.exception('Job failed.')
-        Logger.error("Job failed", exception=traceback.format_exc())
         sys.exit(1)
     finally:
         if main_args.cleanup:
