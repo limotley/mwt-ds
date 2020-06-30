@@ -304,15 +304,15 @@ def main(args):
             marginal_features = marginal_tmp
 
     print("\n***************************************")
-    Logger.info("Settings: Base command + log file: {}\n".format(base_command) +
+    Logger.info("SETTINGS\n Base command + log file: {}\n".format(base_command) +
                 "Shared feature namespaces: {}\n".format(shared_features) +
                 "Action feature namespaces: {}\n".format(action_features) +
                 "Marginal feature namespaces: {}\n".format(marginal_features) +
-                'cb_types: ['+', '.join(args.cb_types) + ']' +
-                'learning rates: ['+', '.join(map(str,args.learning_rates)) + ']' +
-                'l1 regularization rates: ['+', '.join(map(str,args.regularizations)) + ']' +
-                'power_t rates: ['+', '.join(map(str,args.power_t_rates)) + ']' +
-                'Hyper-parameters grid size: {}'.format((len(marginal_features)+1)*len(args.cb_types)*len(args.learning_rates)*len(args.regularizations)*len(args.power_t_rates)) +
+                'cb_types: ['+', '.join(args.cb_types) + ']\n' +
+                'learning rates: ['+', '.join(map(str,args.learning_rates)) + ']\n' +
+                'l1 regularization rates: ['+', '.join(map(str,args.regularizations)) + ']\n' +
+                'power_t rates: ['+', '.join(map(str,args.power_t_rates)) + ']\n' +
+                'Hyper-parameters grid size: {}\n'.format((len(marginal_features)+1)*len(args.cb_types)*len(args.learning_rates)*len(args.regularizations)*len(args.power_t_rates)) +
                 "Parallel processes: {}".format(args.n_proc))
     print("***************************************")
     if __name__ == '__main__' and input('Press ENTER to start (any other key to exit)...' ) != '':
