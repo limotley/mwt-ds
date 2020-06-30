@@ -71,11 +71,6 @@ if __name__ == '__main__':
 
     Logger.create_logger(ld_args.app_id, main_args.evaluation_id)
 
-    try:
-        raise NameError("hi")
-    except:
-        Logger.exception("Caught error")
-
     check_system()
 
     telemetry_client != None and telemetry_client.track_event('ExperimentationAzure.StartEvaluation', properties)
@@ -215,6 +210,7 @@ if __name__ == '__main__':
                     json.dump(summary_data, outfile)
                 azure_util.upload_to_blob(ld_args.app_id, os.path.join(main_args.output_folder, main_args.summary_json), summary_file_path)
         Logger.info("Done executing job")
+        raise NameError("heelo")
     except Exception as e:
         Logger.exception('Job failed.')
         sys.exit(1)
