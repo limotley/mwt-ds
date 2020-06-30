@@ -70,6 +70,10 @@ if __name__ == '__main__':
 
     Logger.create_logger(ld_args.app_id, main_args.evaluation_id)
 
+    try: 
+        raise NameError("hi")
+    except:
+        Logger.exception(*sys.exc_info(), "ex")
     check_system()
 
     telemetry_client != None and telemetry_client.track_event('ExperimentationAzure.StartEvaluation', properties)

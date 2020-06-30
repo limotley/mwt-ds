@@ -36,12 +36,12 @@ class Logger:
         Logger.__log('WARNING', msg)
 
     @staticmethod
-    def error(msg: str):
-        Logger.__log('ERROR', msg, sys.stderr, 'exception')
+    def error(msg: str, **kwargs):
+        Logger.__log('ERROR', msg, sys.stderr, 'exception', **kwargs)
 
     @staticmethod
     def exception(e_type, e_value, e_traceback, msg: str=None):
-        Logger.__log('ERROR', msg, sys.stderr, 'exception', exceptionType=e_type, exceptionValue=e_value, exceptionTraceback=e_traceback)
+        Logger.error(msg, exceptionType=e_type, exceptionValue=e_value, exceptionTraceback=e_traceback)
 
     @staticmethod
     def close():
