@@ -96,7 +96,7 @@ def run_experiment(command):
         else:
             Logger.info("Error for command {0}: {} lines with 'average loss = '. Expected 1".format(command.full_command, len(loss_lines)))
     except:
-        Logger.exception(*sys.exc_info(), "Error for command {}".format(command.full_command))
+        Logger.exception("Error for command {}".format(command.full_command))
     return command
     
 def run_experiment_set(command_list, n_proc):

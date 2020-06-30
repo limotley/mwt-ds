@@ -23,7 +23,7 @@ class AzureUtil:
             Logger.info("Done uploading blob")
             Logger.info('Upload Time: {}'.format((t2-t1)-timedelta(microseconds=(t2-t1).microseconds)))
         except Exception as e:
-            Logger.exception(*sys.exc_info(), "Error uploading blob to storage")
+            Logger.exception("Error uploading blob to storage")
             if self.throw_ex: raise(e)
             
     def download_from_blob(self, storage_container_name, storage_file_name, local_file_path):
@@ -35,7 +35,7 @@ class AzureUtil:
             Logger.info("Done downloading blob")
             Logger.info('Download Time: {}'.format((t2-t1)-timedelta(microseconds=(t2-t1).microseconds)))
         except Exception as e:
-            Logger.exception(*sys.exc_info(), "Error downloading from blob")
+            Logger.exception("Error downloading from blob")
             if self.throw_ex: raise(e)
             
     def download_all_blobs(self, storage_container_name, local_dir):

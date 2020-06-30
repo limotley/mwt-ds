@@ -12,7 +12,7 @@ except ImportError as e:
         import pip
         pip.main(['install', 'azure.storage.blob'])
         Logger.info('Please re-run script.')
-    Logger.exception(*sys.exc_info())
+    Logger.exception()
     sys.exit(1)
 
 
@@ -129,7 +129,7 @@ def download_container(app_id, log_dir, container=None, conn_string=None, accoun
                     open(output_fp, 'wb').write(r.content)
                     Logger.info('Finished downloading output file')
                 except:
-                    Logger.exception(*sys.exc_info())
+                    Logger.exception()
                     sys.exit(1)
         
     else: # using BlockBlobService python api for cooked logs

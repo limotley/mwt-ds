@@ -29,7 +29,7 @@ def check_system():
                     '/mnt Used size:  {:.3f} GB\n'.format(shutil.disk_usage('/mnt').used  / bytes_in_gb) +
                     '/mnt Free size:  {:.3f} GB\n'.format(shutil.disk_usage('/mnt').free  / bytes_in_gb))
     except:
-        Logger.exception(*sys.exc_info())
+        Logger.exception()
 
 if __name__ == '__main__':
     # Change directory to working directory to have vw.exe in path
@@ -116,9 +116,9 @@ if __name__ == '__main__':
                         try:
                             check_output(custom_command.split(' '), stderr=STDOUT)
                         except:
-                            Logger.exception(*sys.exc_info(), "Custom policy run failed")
+                            Logger.exception("Custom policy run failed")
             except:
-                Logger.exception(*sys.exc_info())
+                Logger.exception()
 
         if main_args.run_experimentation:
             experimentation_start_time = datetime.now()
@@ -205,7 +205,7 @@ if __name__ == '__main__':
                                         'arguments' :p['arguments']
                                     })
                     except:
-                        Logger.exception(*sys.exc_info())
+                        Logger.exception()
                 with open(summary_file_path, 'w') as outfile:
                     json.dump(summary_data, outfile)
                 azure_util.upload_to_blob(ld_args.app_id, os.path.join(main_args.output_folder, main_args.summary_json), summary_file_path)
@@ -213,7 +213,7 @@ if __name__ == '__main__':
         raise NameError("Testexcept")
     except Exception as e:
         Logger.error(e)
-        Logger.exception(*sys.exc_info(), 'Job failed.')
+        Logger.exception('Job failed.')
         Logger.error("Job failed", exception=traceback.format_exc())
         sys.exit(1)
     finally:
