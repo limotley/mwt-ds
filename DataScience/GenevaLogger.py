@@ -24,7 +24,7 @@ class Logger:
             print(log_content)
             logger = sender.get_global_sender()
             if not logger.emit(tag, log_content):
-                print(logger.last_error)
+                print(logger.last_error, flush=True)
                 logger.clear_last_error()
             else:
                 print("logging done", flush=True)
