@@ -2,8 +2,8 @@ from fluent import asyncsender as sender
 import json
 import sys
 import traceback
-from logging.geneva_logger import GenevaLogger 
-from logging.console_logger import ConsoleLogger
+from loggers.geneva_logger import GenevaLogger 
+from loggers.console_logger import ConsoleLogger
 
 class Logger:
     loggers = []

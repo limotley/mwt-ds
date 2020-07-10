@@ -6,7 +6,7 @@ import Experimentation
 import FeatureImportance
 import dashboard_utils
 import LogDownloader
-from logging.logger_wrapper import Logger
+from loggers.logger_wrapper import Logger
 import traceback
 
 import uuid
@@ -61,10 +61,10 @@ if __name__ == '__main__':
 
 
         
-        Logger.create_loggers(geneva=False,
+        Logger.create_loggers(geneva=True,
                             namespace="microsoft.cloudai.personalization",
                             host="localhost",
-                            port="24224",
+                            port=24224,
                             appId=ld_args.app_id,
                             jobId=main_args.evaluation_id)
         Logger.info("Testing log wrapper")
