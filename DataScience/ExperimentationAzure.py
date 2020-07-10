@@ -43,7 +43,6 @@ if __name__ == '__main__':
     main_parser.add_argument('--geneva_namespace', help="namespace for Geneva logging.")
     main_parser.add_argument('--geneva_host')
     main_parser.add_argument('--geneva_port')
-    main_parser.add_argument('--geneva_args')
     main_args, other_args = main_parser.parse_known_args(sys.argv[1:])
 
     # Parse LogDownloader args
