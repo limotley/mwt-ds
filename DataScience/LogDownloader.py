@@ -1,5 +1,6 @@
 import sys
-from GenevaLogger import Logger
+from logging.logger_wrapper import Logger
+
 if sys.maxsize < 2**32:     # check for 32-bit python version
     if input("32-bit python interpreter detected. There may be problems downloading large files. Do you want to continue anyway [Y/n]? ") not in {'Y', 'y'}:
         sys.exit()
@@ -57,14 +58,14 @@ def add_parser_args(parser):
     2: always overwrite; download currently used blobs
     3: never overwrite; append if the size is larger, without asking; download currently used blobs
     4: never overwrite; append if the size is larger, without asking; skip currently used blobs''', default=0)
-    parser.add_argument('--dry_run', help="Logger.info which blobs would have been downloaded, without downloading", action='store_true')
+    parser.add_argument('--dry_run', help="print which blobs would have been downloaded, without downloading", action='store_true')
     parser.add_argument('--create_gzip_mode', type=int, help='''Mode to create gzip file(s) for Vowpal Wabbit:
     0: create one gzip file for each LastConfigurationEditDate prefix
     1: create a unique gzip file by merging over file dates
     2: create a unique gzip file by uniquing over EventId and sorting by Timestamp''', default=-1)
     parser.add_argument('--delta_mod_t', type=int, default=3600, help='time window in sec to detect if a file is currently in use (default=3600 - 1 hour)')
     parser.add_argument('--max_connections', type=int, default=4, help='number of max_connections (default=4)')
-    parser.add_argument('--verbose', help="Logger.info more details", action='store_true')
+    parser.add_argument('--verbose', help="print more details", action='store_true')
     parser.add_argument('--confirm', help="confirm before downloading", action='store_true')
     parser.add_argument('--report_progress', help="report progress while downloading", action='store_false')
     parser.add_argument('--if_match', help="set get_blob_to_path() if_match field")
@@ -107,9 +108,9 @@ def download_container(app_id, log_dir, container=None, conn_string=None, accoun
         do_download = True
         if os.path.isfile(output_fp):
             if overwrite_mode in {0, 3, 4}:
-                Logger.info('Output file already exits. Not downloading'.format(output_fp))
+                Logger.info('Output file {} already exists. Not downloading'.format(output_fp))
                 do_download = False
-            elif overwrite_mode == 1 and input('Output file already exits. Do you want to overwrite [Y/n]? '.format(output_fp)) not in {'Y', 'y'}:
+            elif overwrite_mode == 1 and input('Output file {} already exists. Do you want to overwrite [Y/n]? '.format(output_fp)) not in {'Y', 'y'}:
                 do_download = False
                 
         if do_download:
@@ -122,7 +123,7 @@ def download_container(app_id, log_dir, container=None, conn_string=None, accoun
                     LogDownloaderURL = "https://cps-staging-exp-experimentation.azurewebsites.net/api/Log?account={ACCOUNT_NAME}&key={ACCOUNT_KEY}&start={START_DATE}&end={END_DATE}&container={CONTAINER}"
                     conn_string_dict = dict(x.split('=',1) for x in conn_string.split(';'))
                     if not conn_string_dict['AccountName'] or len(conn_string_dict['AccountKey']) != 88:
-                        print("Invalid Azure Storage ConnectionString.")
+                        Logger.error("Invalid Azure Storage ConnectionString.")
                         sys.exit(1)
                     url = LogDownloaderURL.format(ACCOUNT_NAME=conn_string_dict['AccountName'], ACCOUNT_KEY=conn_string_dict['AccountKey'].replace('+','%2b'), CONTAINER=container, START_DATE=start_date.strftime("%Y-%m-%d"), END_DATE=(end_date+datetime.timedelta(days=1)).strftime("%Y-%m-%d"))
                     r = requests.post(url)
@@ -251,7 +252,7 @@ def download_container(app_id, log_dir, container=None, conn_string=None, accoun
                         total_download_size_MB+=download_size_MB
                         Logger.info('\nDownloaded {:.3f} MB in {:.1f} sec. ({:.3f} MB/sec)\n'.format(download_size_MB, download_time, download_size_MB/download_time))
             except:
-                Logger.error(*sys.exc_info())
+                Logger.exception()
 
         if create_gzip_mode > -1:
             if selected_fps:

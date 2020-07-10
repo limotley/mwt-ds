@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 from azure.storage.blob import BlockBlobService
-from GenevaLogger import Logger
-import os, sys
+import os
+from logging.logger_wrapper import Logger
 
 class AzureUtil:
     def __init__(self, conn_string=None, account_name=None, sas_token=None, throw_ex=True):
@@ -45,3 +45,4 @@ class AzureUtil:
             
     def list_blobs(self, storage_container_name):
         return self.block_blob_service.list_blobs(storage_container_name)
+

@@ -6,19 +6,9 @@ import Experimentation
 import FeatureImportance
 import dashboard_utils
 import LogDownloader
-from GenevaLogger import Logger
-import uuid
-import traceback
-from applicationinsights import TelemetryClient
+from logging.logger_wrapper import Logger
 
-def get_telemetry_client(appInsightsInstrumentationKey):
-    Logger.info(appInsightsInstrumentationKey)
-    if appInsightsInstrumentationKey:
-        client = TelemetryClient(appInsightsInstrumentationKey)
-        client.context.operation.id = str(uuid.uuid4())
-        return client
-    else:
-        return None
+import uuid
 
 def check_system():
     try:
@@ -50,10 +40,11 @@ if __name__ == '__main__':
     main_parser.add_argument('--feature_importance_filename', help="name of the output feature importance file", default='featureimportance.json')
     main_parser.add_argument('--feature_importance_raw_filename', help="name of the output feature importance file with raw (unparsed) features", default='featureimportanceraw.json')
     main_parser.add_argument('--ml_args', help="the online policy that we need for calculating the feature importances", required=True)
-    main_parser.add_argument('--appInsightsInstrumentationKey', help="App Insights key for logging metrics")
+    main_parser.add_argument('--geneva_namespace', help="namespace for Geneva logging.")
+    main_parser.add_argument('--geneva_host')
+    main_parser.add_argument('--geneva_port')
+    main_parser.add_argument('--geneva_args')
     main_args, other_args = main_parser.parse_known_args(sys.argv[1:])
-
-    telemetry_client = None#get_telemetry_client(main_args.appInsightsInstrumentationKey)
 
     # Parse LogDownloader args
     log_download_start_time = datetime.now()
@@ -67,13 +58,19 @@ if __name__ == '__main__':
     output_dir = os.path.join(ld_args.log_dir, ld_args.app_id)
     task_dir = os.path.dirname(os.path.dirname(ld_args.log_dir))
 
-    properties = {'app_id' : ld_args.app_id, 'evaluation_id' : main_args.evaluation_id }
 
-    Logger.create_logger(ld_args.app_id, main_args.evaluation_id)
-
+    Logger.create_loggers(geneva=True,
+                          namespace=main_args.geneva_namespace,
+                          host=main_args.geneva_host,
+                          port=main_args.geneva_port,
+                          appId=ld_args.app_id,
+                          jobId=main_args.evaluation_id)
+    Logger.info("Testing log wrapper")
+    try:
+        raise NameError("Testing log wrapper error")
+    except:
+        Logger.exception("Error message")
     check_system()
-
-    telemetry_client != None and telemetry_client.track_event('ExperimentationAzure.StartEvaluation', properties)
 
      # Clean out logs directory
     if main_args.delete_logs_dir and os.path.isdir(ld_args.log_dir):
@@ -83,7 +80,6 @@ if __name__ == '__main__':
     try:
         # Download cooked logs
         output_gz_fp, total_download_size = LogDownloader.download_container(**vars(ld_args))
-        telemetry_client != None and telemetry_client.track_event('ExperimentationAzure.LogDownload', properties, { 'TimeTaken' : (datetime.now() - log_download_start_time).seconds , 'Total_Size': total_download_size})
 
         if output_gz_fp == None:
             Logger.error('No logs found between start date: {0} and end date:{1}. Exiting ... '.format(ld_args.start_date, ld_args.end_date))
@@ -135,7 +131,6 @@ if __name__ == '__main__':
             experiments_file_path = os.path.join(os.getcwd(), "experiments.csv")
             azure_util.upload_to_blob(ld_args.app_id,  os.path.join(main_args.output_folder, "experiments.csv"), experiments_file_path)
             if main_args.cleanup: os.remove(experiments_file_path)
-            telemetry_client != None and telemetry_client.track_event('ExperimentationAzure.OfflineExperimentation', properties, { 'TimeTaken' : (datetime.now() - experimentation_start_time).seconds })
 
         # Generate dashboard files
         dashboard_file_path = os.path.join(output_dir, main_args.dashboard_filename)
@@ -185,8 +180,6 @@ if __name__ == '__main__':
                 json.dump(feature_buckets, feature_importance_raw_file)
             azure_util.upload_to_blob(ld_args.app_id, os.path.join(main_args.output_folder, main_args.feature_importance_raw_filename), feature_importance_raw_file_path)
 
-            telemetry_client != None and telemetry_client.track_event('ExperimentationAzure.FeatureImportance', properties, { 'TimeTaken' : (datetime.now() - feature_importance_start_time).seconds })
-
         # Merge calculated policies into summary file path, upload summary file
         if main_args.summary_json:
             summary_file_path = os.path.join(output_dir, main_args.summary_json)
@@ -210,8 +203,7 @@ if __name__ == '__main__':
                     json.dump(summary_data, outfile)
                 azure_util.upload_to_blob(ld_args.app_id, os.path.join(main_args.output_folder, main_args.summary_json), summary_file_path)
         Logger.info("Done executing job")
-        raise NameError("heelo")
-    except Exception as e:
+    except:
         Logger.exception('Job failed.')
         sys.exit(1)
     finally:
@@ -225,6 +217,4 @@ if __name__ == '__main__':
         sys.stderr.flush()
         azure_util.upload_to_blob(ld_args.app_id, os.path.join(main_args.output_folder, 'stdout.txt'), os.path.join(task_dir, 'stdout.txt'))
         azure_util.upload_to_blob(ld_args.app_id, os.path.join(main_args.output_folder, 'stderr.txt'), os.path.join(task_dir, 'stderr.txt'))
-        telemetry_client != None and telemetry_client.track_event('ExperimentationAzure.CompleteEvaluation', properties, { 'TimeTaken' : (end_time - start_time).seconds })
-        telemetry_client != None and telemetry_client.flush()
         Logger.close()

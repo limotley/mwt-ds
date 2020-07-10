@@ -9,8 +9,7 @@ import itertools
 from enum import Enum
 import numpy as np
 import collections
-from GenevaLogger import Logger
-
+from logging.logger_wrapper import Logger
 
 class Command:
     def __init__(self, base, cb_type=None, marginal_list=None, ignore_list=None, interaction_list=None, regularization=None, learning_rate=None, power_t=None, clone_from=None):
@@ -94,7 +93,7 @@ def run_experiment(command):
             command.loss = float(loss_lines[0].split()[3])
             Logger.info("Ave. Loss: {:12}Policy: {}".format(str(command.loss),command.full_command))
         else:
-            Logger.info("Error for command {0}: {} lines with 'average loss = '. Expected 1".format(command.full_command, len(loss_lines)))
+            Logger.error("Error for command {0}: {} lines with 'average loss = '. Expected 1".format(command.full_command, len(loss_lines)))
     except:
         Logger.exception("Error for command {}".format(command.full_command))
     return command
@@ -288,7 +287,7 @@ def main(args):
                     for action in action_set:
                         detect_namespaces(action, action_tmp, marginal_tmp)
                 else:
-                    Logger.info('Error: c not in json: {}'.format(line))
+                    Logger.error('Error: c not in json: {}'.format(line))
                     input('Press ENTER to continue...')
 
                 # We assume the schema is consistent throughout the file, but since some
@@ -419,5 +418,9 @@ def main(args):
         
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
+
+
     add_parser_args(parser)
+    main(parser.parse_args())
+
     main(parser.parse_args())
