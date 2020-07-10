@@ -65,10 +65,7 @@ if __name__ == '__main__':
                           appId=ld_args.app_id,
                           jobId=main_args.evaluation_id)
     Logger.info("Testing log wrapper")
-    try:
-        raise NameError("Testing log wrapper error")
-    except:
-        Logger.exception("Error message")
+
     check_system()
 
      # Clean out logs directory
@@ -202,6 +199,7 @@ if __name__ == '__main__':
                     json.dump(summary_data, outfile)
                 azure_util.upload_to_blob(ld_args.app_id, os.path.join(main_args.output_folder, main_args.summary_json), summary_file_path)
         Logger.info("Done executing job")
+        raise NameError("Testing log wrapper error")
     except:
         Logger.exception('Job failed.')
         sys.exit(1)
