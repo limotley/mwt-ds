@@ -61,7 +61,7 @@ if __name__ == '__main__':
 
 
         
-        Logger.create_loggers(geneva=True,
+        Logger.create_loggers(geneva=False,
                             namespace="microsoft.cloudai.personalization",
                             host="localhost",
                             port="24224",
