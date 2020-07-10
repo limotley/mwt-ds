@@ -46,11 +46,6 @@ if __name__ == '__main__':
         #main_parser.add_argument('--geneva_host')
         #main_parser.add_argument('--geneva_port')
         main_args, other_args = main_parser.parse_known_args(sys.argv[1:])
-
-        sys.stdout.flush()
-        sys.stderr.flush()
-        azure_util.upload_to_blob(ld_args.app_id, os.path.join(main_args.output_folder, 'stdout.txt'), os.path.join(task_dir, 'stdout.txt'))
-        azure_util.upload_to_blob(ld_args.app_id, os.path.join(main_args.output_folder, 'stderr.txt'), os.path.join(task_dir, 'stderr.txt'))
        
         # Parse LogDownloader args
         log_download_start_time = datetime.now()
