@@ -204,18 +204,17 @@ if __name__ == '__main__':
         Logger.info("Done executing job")
         raise NameError("Testing log wrapper error")
     except:
-        #Logger.exception('Job failed.')
-        print(traceback.format_exc())
+        Logger.exception('Job failed.')
         sys.exit(1)
     finally:
         if main_args.cleanup:
-            #Logger.info('Deleting folder as part of cleanup: {}'.format(ld_args.log_dir))
+            Logger.info('Deleting folder as part of cleanup: {}'.format(ld_args.log_dir))
             shutil.rmtree(ld_args.log_dir, ignore_errors=True)
 
         end_time = datetime.now()
-        #Logger.info('Total Job time in seconds: {}'.format((end_time - start_time).seconds))
+        Logger.info('Total Job time in seconds: {}'.format((end_time - start_time).seconds))
         sys.stdout.flush()
         sys.stderr.flush()
         azure_util.upload_to_blob(ld_args.app_id, os.path.join(main_args.output_folder, 'stdout.txt'), os.path.join(task_dir, 'stdout.txt'))
         azure_util.upload_to_blob(ld_args.app_id, os.path.join(main_args.output_folder, 'stderr.txt'), os.path.join(task_dir, 'stderr.txt'))
-        #Logger.close()
+        Logger.close()
