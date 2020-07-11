@@ -42,9 +42,9 @@ if __name__ == '__main__':
         main_parser.add_argument('--feature_importance_filename', help="name of the output feature importance file", default='featureimportance.json')
         main_parser.add_argument('--feature_importance_raw_filename', help="name of the output feature importance file with raw (unparsed) features", default='featureimportanceraw.json')
         main_parser.add_argument('--ml_args', help="the online policy that we need for calculating the feature importances", required=True)
-        #main_parser.add_argument('--geneva_namespace', help="namespace for Geneva logging.")
-        #main_parser.add_argument('--geneva_host')
-        #main_parser.add_argument('--geneva_port')
+        main_parser.add_argument('--geneva_namespace', help="namespace for Geneva logging.")
+        main_parser.add_argument('--geneva_host')
+        main_parser.add_argument('--geneva_port')
         main_args, other_args = main_parser.parse_known_args(sys.argv[1:])
        
         # Parse LogDownloader args
@@ -62,12 +62,12 @@ if __name__ == '__main__':
 
         
         Logger.create_loggers(geneva=True,
-                            namespace="microsoft.cloudai.personalization",
-                            host="localhost",
-                            port=24224,
+                            namespace=main_args.geneva_namespace,
+                            host=main_args.geneva_host,
+                            port=main_args.geneva_port,
                             appId=ld_args.app_id,
                             jobId=main_args.evaluation_id)
-                            
+
         check_system()
 
         # Clean out logs directory
