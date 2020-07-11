@@ -42,9 +42,9 @@ if __name__ == '__main__':
         main_parser.add_argument('--feature_importance_filename', help="name of the output feature importance file", default='featureimportance.json')
         main_parser.add_argument('--feature_importance_raw_filename', help="name of the output feature importance file with raw (unparsed) features", default='featureimportanceraw.json')
         main_parser.add_argument('--ml_args', help="the online policy that we need for calculating the feature importances", required=True)
-        main_parser.add_argument('--geneva_namespace', help="namespace for Geneva logging.")
-        main_parser.add_argument('--geneva_host')
-        main_parser.add_argument('--geneva_port')
+        main_parser.add_argument('--geneva_namespace', help="namespace for Geneva logging")
+        main_parser.add_argument('--geneva_host', help="host for Geneva logging")
+        main_parser.add_argument('--geneva_port', help="port for Geneva logging", type=int)
         main_args, other_args = main_parser.parse_known_args(sys.argv[1:])
        
         # Parse LogDownloader args
@@ -58,9 +58,7 @@ if __name__ == '__main__':
         ld_args, other_args = logdownloader_parser.parse_known_args(other_args)
         output_dir = os.path.join(ld_args.log_dir, ld_args.app_id)
         task_dir = os.path.dirname(os.path.dirname(ld_args.log_dir))
-
-
-        
+  
         Logger.create_loggers(geneva=True,
                             namespace=main_args.geneva_namespace,
                             host=main_args.geneva_host,
