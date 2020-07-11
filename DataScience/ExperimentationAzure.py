@@ -67,8 +67,7 @@ if __name__ == '__main__':
                             port=24224,
                             appId=ld_args.app_id,
                             jobId=main_args.evaluation_id)
-        Logger.info("Testing log wrapper")
-
+                            
         check_system()
 
         # Clean out logs directory
