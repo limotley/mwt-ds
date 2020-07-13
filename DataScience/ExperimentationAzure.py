@@ -60,7 +60,7 @@ if __name__ == '__main__':
   
         geneva_gbl_vals = {'appId': ld_args.app_id, 'jobId': main_args.evaluation_id}
         Logger.create_loggers(geneva_namespace=main_args.geneva_namespace,
-                              geneva_host=main_args.geneva_hosta,
+                              geneva_host=main_args.geneva_host,
                               geneva_port=main_args.geneva_port,
                               geneva_gbl_vals=geneva_gbl_vals)
 
