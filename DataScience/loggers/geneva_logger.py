@@ -3,18 +3,18 @@ import json
 import sys
 import traceback
 
-from loggers.logger_base import Logger
+from loggers.logger_base import LoggerBase
 
-class GenevaLogger(Logger):
+class GenevaLogger(LoggerBase):
 
-    def __init__(self, namespace, host, port, **global_args):
+    def __init__(self, namespace, host, port, **global_vals):
         sender.setup(namespace, host=host, port=port)
-        self.global_args = global_args
+        self.global_vals = global_vals
 
     def __log(self, level, msg, tag, **kwargs):
         try:
             base_log = {'level': level, 'message': msg}
-            log_content = {**base_log, **kwargs, **self.global_args}
+            log_content = {**base_log, **kwargs, **self.global_vals}
             logger = sender.get_global_sender()
             if not logger.emit(tag, log_content):
                 print(logger.last_error)

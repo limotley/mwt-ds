@@ -1,1 +1,1 @@
-'''Logging'''
+from loggers.logger_wrapper import Logger

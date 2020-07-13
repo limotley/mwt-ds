@@ -6,8 +6,7 @@ import Experimentation
 import FeatureImportance
 import dashboard_utils
 import LogDownloader
-from loggers.logger_wrapper import Logger
-import traceback
+from loggers import Logger
 
 import uuid
 
@@ -59,12 +58,11 @@ if __name__ == '__main__':
         output_dir = os.path.join(ld_args.log_dir, ld_args.app_id)
         task_dir = os.path.dirname(os.path.dirname(ld_args.log_dir))
   
-        Logger.create_loggers(geneva=True,
-                            namespace=main_args.geneva_namespace,
-                            host=main_args.geneva_host,
-                            port=main_args.geneva_port,
-                            appId=ld_args.app_id,
-                            jobId=main_args.evaluation_id)
+        geneva_gbl_vals = {'appId': ld_args.app_id, 'jobId': main_args.evaluation_id}
+        Logger.create_loggers(geneva_namespace=main_args.geneva_namespace,
+                              geneva_host=main_args.geneva_hosta,
+                              geneva_port=main_args.geneva_port,
+                              geneva_gbl_vals=geneva_gbl_vals)
 
         check_system()
 
@@ -199,7 +197,6 @@ if __name__ == '__main__':
                     json.dump(summary_data, outfile)
                 azure_util.upload_to_blob(ld_args.app_id, os.path.join(main_args.output_folder, main_args.summary_json), summary_file_path)
         Logger.info("Done executing job")
-        raise NameError("Testing log wrapper error")
     except:
         Logger.exception('Job failed.')
         sys.exit(1)

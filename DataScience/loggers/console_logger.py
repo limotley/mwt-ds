@@ -2,9 +2,9 @@ import json
 import sys
 import traceback
 
-from loggers.logger_base import Logger
+from loggers.logger_base import LoggerBase
 
-class ConsoleLogger(Logger):
+class ConsoleLogger(LoggerBase):
 
     def __log(self, msg, output=sys.stdout):
         print(msg, file=output)

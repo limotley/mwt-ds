@@ -1,6 +1,6 @@
 import abc
 
-class Logger(abc.ABC):
+class LoggerBase(abc.ABC):
     
     @abc.abstractmethod
     def info(self, msg: str, tag='log', **kwargs):
