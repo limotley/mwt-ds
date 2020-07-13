@@ -8,33 +8,33 @@ from loggers.console_logger import ConsoleLogger
 class Logger:
     loggers = []
 
-    @staticmethod
-    def create_loggers(geneva=False, **geneva_args):
+    @classmethod
+    def create_loggers(cls, geneva=False, **geneva_args):
         Logger.loggers.append(ConsoleLogger())
         if geneva:
-            Logger.loggers.append(GenevaLogger(**geneva_args))
+            cls.loggers.append(GenevaLogger(**geneva_args))
 
-    @staticmethod
-    def info(msg: str, **kwargs):
-        for logger in Logger.loggers:
+    @classmethod
+    def info(cls, msg: str, **kwargs):
+        for logger in cls.loggers:
             logger.info(msg, **kwargs)
 
-    @staticmethod
-    def warning(msg: str, **kwargs):
-        for logger in Logger.loggers:
+    @classmethod
+    def warning(cls, msg: str, **kwargs):
+        for logger in cls.loggers:
             logger.warning(msg, **kwargs)
 
-    @staticmethod
-    def error(msg: str, **kwargs):
-        for logger in Logger.loggers:
+    @classmethod
+    def error(cls, msg: str, **kwargs):
+        for logger in cls.loggers:
             logger.error(msg, **kwargs)
 
-    @staticmethod
-    def exception(msg: str='', **kwargs):
-        for logger in Logger.loggers:
+    @classmethod
+    def exception(cls, msg: str='', **kwargs):
+        for logger in cls.loggers:
             logger.exception(msg, **kwargs)
 
-    @staticmethod
-    def close():
-        for logger in Logger.loggers:
+    @classmethod
+    def close(cls):
+        for logger in cls.loggers:
             logger.close()
