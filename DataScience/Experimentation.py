@@ -83,7 +83,7 @@ def result_writer(command_list):
             command.base, command.learning_rate, command.cb_type, str(command.marginal_list), \
             str(command.ignore_list), str(command.interaction_list), str(command.regularization), str(datetime.now()), command.full_command)
         experiment_file.write(line + "\n")
-        Logger.info(line)
+        #Logger.info(line)
     experiment_file.flush()
     
 def run_experiment(command):
