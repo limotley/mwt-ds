@@ -13,16 +13,22 @@ class GenevaLogger(LoggerBase):
 
     def __log(self, level, msg, tag, **kwargs):
         try:
+            print("creating base log")
             base_log = {'level': level, 'message': msg}
+            print("creating log content")
             log_content = {**base_log, **kwargs, **self.global_vals}
+            print("sending log")
             logger = sender.get_global_sender()
             if not logger.emit(tag, log_content):
+                print("emit failed")
                 print(logger.last_error)
                 logger.clear_last_error()
         except Exception as e:
             print("Error while logging: {}".format(e))
+        print("reached end log")
 
     def info(self, msg: str, tag='log', **kwargs):
+        print("in info")
         self.__log('INFO', msg, tag, **kwargs)
 
     def warning(self, msg: str, tag='log', **kwargs):

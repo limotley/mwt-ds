@@ -78,12 +78,14 @@ class Command:
         
 def result_writer(command_list):
     experiment_file = open("experiments.csv", "a")
+    print("opening experiment file")
     for command in command_list:
+        print("going through command {}".format(command))
         line = "{0:7f}\t{1}\t{2:7f}\t{3}\t{4}\t{5}\t{6}\t{7}\t{8}\t{9}".format(float(command.loss), \
             command.base, command.learning_rate, command.cb_type, str(command.marginal_list), \
             str(command.ignore_list), str(command.interaction_list), str(command.regularization), str(datetime.now()), command.full_command)
         experiment_file.write(line + "\n")
-        #Logger.info(line)
+        Logger.info(line)
     experiment_file.flush()
     
 def run_experiment(command):
