@@ -110,14 +110,14 @@ def run_experiment(command):
     return command
     
 def run_experiment_set(command_list, n_proc):
-    print("in run experiment set")
+    print("in run experiment set {}".format(n_proc))
     # Run the experiments in parallel using n_proc processes
     p = multiprocessing.Pool(n_proc)
-    print("finished mp")
+    print("finished mp", flush=True)
     results = p.map(run_experiment, command_list)
-    print("finished map")
+    print("finished map", flush=True)
     results.sort(key=lambda result: result.loss)
-    print("finished sort")
+    print("finished sort", flush=True)
     p.close()
     print("finished close")
     p.join()
