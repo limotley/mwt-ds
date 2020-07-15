@@ -77,6 +77,7 @@ class Command:
                     "loss: {0}\n".format(self.loss))
         
 def result_writer(command_list):
+    print("in result writer")
     experiment_file = open("experiments.csv", "a")
     print("opening experiment file")
     for command in command_list:
@@ -84,15 +85,22 @@ def result_writer(command_list):
         line = "{0:7f}\t{1}\t{2:7f}\t{3}\t{4}\t{5}\t{6}\t{7}\t{8}\t{9}".format(float(command.loss), \
             command.base, command.learning_rate, command.cb_type, str(command.marginal_list), \
             str(command.ignore_list), str(command.interaction_list), str(command.regularization), str(datetime.now()), command.full_command)
+        print("writing to experiment file")
         experiment_file.write(line + "\n")
+        print("logging")
         Logger.info(line)
+    print("flushing exp file")
     experiment_file.flush()
     
 def run_experiment(command):
     try:
+        print("run experiment")
         results = check_output(command.full_command.split(' '), stderr=STDOUT).decode("utf-8")
+        print("check output")
         loss_lines = [x for x in str(results).splitlines() if x.startswith('average loss = ')]
+        print("loss lines")
         if len(loss_lines) == 1:
+            print("loss lines 1")
             command.loss = float(loss_lines[0].split()[3])
             Logger.info("Ave. Loss: {:12}Policy: {}".format(str(command.loss),command.full_command))
         else:
@@ -102,14 +110,22 @@ def run_experiment(command):
     return command
     
 def run_experiment_set(command_list, n_proc):
+    print("in run experiment set")
     # Run the experiments in parallel using n_proc processes
     p = multiprocessing.Pool(n_proc)
+    print("finished mp")
     results = p.map(run_experiment, command_list)
+    print("finished map")
     results.sort(key=lambda result: result.loss)
+    print("finished sort")
     p.close()
+    print("finished close")
     p.join()
+    print("finished join")
     del p
+    print("finished delete")
     result_writer(results)
+    print("finished result write")
     return results
 
 # Expects j_obj to have type 'dict' and ns_set to be a set (unique elements).
@@ -343,6 +359,7 @@ def main(args):
     command_list = get_hp_command_list(base_command, best_command, args.cb_types, marginal_features, args.learning_rates, args.regularizations, args.power_t_rates)
 
     Logger.info('\nTesting {} different hyperparameters...'.format(len(command_list)))
+    print("finished hp print")
     results = run_experiment_set(command_list, args.n_proc)
     if results[0].loss < best_command.loss:
         best_command = results[0]
