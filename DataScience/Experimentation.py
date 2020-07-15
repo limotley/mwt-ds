@@ -94,15 +94,16 @@ def result_writer(command_list):
     
 def run_experiment(command):
     try:
-        print("run experiment")
+        print("run experiment", flush=True)
         results = check_output(command.full_command.split(' '), stderr=STDOUT).decode("utf-8")
-        print("check output")
+        print("check output", flush=True)
         loss_lines = [x for x in str(results).splitlines() if x.startswith('average loss = ')]
-        print("loss lines")
+        print("loss lines", flush=True)
         if len(loss_lines) == 1:
-            print("loss lines 1")
+            print("loss lines 1", flush=True)
             command.loss = float(loss_lines[0].split()[3])
-            Logger.info("Ave. Loss: {:12}Policy: {}".format(str(command.loss),command.full_command))
+            print("float", flush=True)
+            Logger.info("Ave. Loss: {:12}Policy: {}".format(str(command.loss),command.full_command), flush=True)
         else:
             Logger.error("Error for command {0}: {} lines with 'average loss = '. Expected 1".format(command.full_command, len(loss_lines)))
     except:
